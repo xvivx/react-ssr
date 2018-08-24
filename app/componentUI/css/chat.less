@@ -1,0 +1,67 @@
+@mycolor: #b1e46e;
+@systemcolor: lightblue;
+
+.chat-app{
+    .item-row{
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+
+    .item-row.right{
+        text-align: right;
+        .title-container{
+            float: right;
+            margin: 0;
+            margin-left: 10px;
+        }
+
+        .content-text{
+            .text{
+                background-color: @mycolor;
+            }
+            .text:after{
+                right: -8px;
+                left: auto;
+                border: none;
+                border-top: 8px solid transparent; 
+                border-left: 12px solid @mycolor; 
+                border-bottom: 8px solid transparent; 
+            }
+        }
+    }
+
+    .title-container{
+        float: left;
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+        background-size: cover;
+        border-radius: 50%;
+    }
+    
+    .content-text{
+        .text{
+            position: relative;
+            display: inline-block;
+            max-width: 70%;
+            border-radius: 4px;
+            background-color: @systemcolor;
+            line-height: 20px;
+            padding: 5px;
+            margin: 0;
+            text-align: left;
+        }
+        .text:after{
+            position: absolute;
+            top: 7px;
+            left: -8px;
+            right: auto;
+            content: "";
+            width: 0; 
+            height: 0; 
+            border-top: 8px solid transparent; 
+            border-right: 12px solid @systemcolor; 
+            border-bottom: 8px solid transparent; 
+        }
+    }
+}

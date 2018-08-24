@@ -1,0 +1,85 @@
+@color: #0089ff;
+.carousel-wrapper{
+    position: relative;
+    overflow: hidden;
+    img{
+        max-width: 100%;
+    }
+    .prev-item, .next-item{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        z-index: 10000;
+        width: 15%;
+    }
+    .prev-item{
+        left: 0;
+        background: linear-gradient(to left, transparent, @color 150%);
+    }
+    .next-item{
+        right: 0;
+        background: linear-gradient(to right, transparent , @color 150%);
+    }
+    .carousel-subs{
+        position: absolute;
+        left: 15%;
+        right: 15%;
+        bottom: 20px;
+        z-index: 200;
+        line-height: 50px;
+        text-align: center;
+        font-size: 0;
+        .sub-item{
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin: 10px;
+            vertical-align: middle;
+            box-shadow: 0px 0px 15px 3px @color; 
+        }
+        .sub-item.active{
+            background: @color;
+        }
+    }
+    .carousel-item{
+        position: relative;
+        display: none;
+        transition: transform .6s ease-in-out;
+        // 当前展示的位置
+        &.active{
+            position: relative;
+            display: block;
+        }
+
+        &.active.left{
+            transform: translate3d(-100%, 0, 0);
+        }
+
+        &.active.right{
+            transform: translate3d(100%, 0, 0);
+        }
+
+        // 向左滚动时active最终落点和向右时初始位置
+        &.next, &.prev{
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: block;
+            width: 100%;
+        }
+        
+        &.next{
+            transform: translate3d(100%,0,0);
+        }
+
+        &.prev{
+            transform: translate3d(-100%,0,0);
+        }
+
+        // 过渡帧的位置
+        &.next.left, &.prev.right{
+            transform: translate3d(0, 0, 0);
+        }
+    }
+}
