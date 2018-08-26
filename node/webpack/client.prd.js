@@ -1,5 +1,4 @@
 import webpack from 'webpack';
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
 import dirs from '../configs/index';
 import common from './client.common';
@@ -7,7 +6,6 @@ import common from './client.common';
 
 export default {
     ...common,
-    mode: 'production',
     module: {
         strictExportPresence: true,
         rules: [
@@ -61,17 +59,28 @@ export default {
             }
         ]
     },
-    devtool: 'source-map',
+    optimization: {
+        runtimeChunk: 'single',
+        splitChunks: {
+            chunks: 'all',
+            cacheGroups: {
+                commons: {
+                    chunks: 'all',
+                    test: /[\\/]node_modules[\\/]/,
+                    name: true,
+                },
+            },
+        },
+    },
     plugins: [
         ...common.plugins,
         new CleanWebpackPlugin([dirs.clientOutput], {
             root: dirs.root,
         }),
-        new UglifyJsPlugin({
-            sourceMap: true
-        }),
-        new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('production')
-        }),
+        new webpack.HashedModuleIdsPlugin({
+            hashFunction: 'sha256',
+            hashDigest: 'hex',
+            hashDigestLength: 20
+        })
     ],
 };

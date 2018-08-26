@@ -3,16 +3,16 @@ import dynamic from '../utils/dynamic-page';
 export default [
     {
         path: '/',
-        component: dynamic(import('../page/home/HomePage')),
+        component: dynamic(import(/* webpackChunkName: 'home' */'../page/home/HomePage')),
         exact: true,
     }, {
         path: '/todo',
-        component: dynamic(() => import('../page/todo/ToDoPage'))
+        component: dynamic(() => import(/* webpackChunkName: 'todo' */'../page/todo/ToDoPage'))
     }, {
         path: '/counter',
-        component: dynamic(() => import('../page/CounterPage'))
+        component: dynamic(() => import(/* webpackChunkName: 'counter' */'../page/CounterPage'))
     }, {
         path: '/olami',
-        component: dynamic(() => import('../page/OlamiPage'))
+        component: dynamic(() => import(/* webpackChunkName: 'olami' */'../page/OlamiPage'))
     }
 ];

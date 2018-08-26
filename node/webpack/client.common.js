@@ -1,10 +1,13 @@
 import path from 'path';
+import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import dirs from '../configs/index';
+import { env } from '../utils';
 
-var isDev = process.env.NDOE_ENV === 'development';
+var isDev = env('development');
 
 export default {
+    mode: isDev ? 'development' : 'production',
     entry: {
         // 开发模式下启用热更新
         app: (isDev ? [`webpack-hot-middleware/client`] : []).concat(dirs.clientEntry),
@@ -20,9 +23,8 @@ export default {
     output: {
         path: dirs.clientOutput,
         publicPath: dirs.publicPath,
-        filename: `js/[name].js`,
-        chunkFilename: 'js/chunks/[chunkhash].js',
-        pathinfo: true
+        filename: `${isDev ? '[name]' : 'js/[name].[chunkhash:8]'}.js`,
+        chunkFilename: `${isDev ? '[name].chunk' : 'js/chunks/[name].[chunkhash:8]'}.js`,
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -30,17 +32,14 @@ export default {
             template: path.resolve(dirs.clientEntry, '../index.html'),
             filename: 'index.html'
         }),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify(isDev ? 'development' : 'production')
+        }),
     ],
-    optimization: {
-        splitChunks: {
-            cacheGroups: {
-                commons: {
-                    chunks: 'all',
-                    test: /[\\/]node_modules[\\/]/,
-                    name: true,
-                },
-            },
-        },
-    },
+    // optimization: {
+    //     splitChunks: {
+    //         chunks: 'all',
+    //     },
+    // },
     target: 'web',
 };

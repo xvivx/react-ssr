@@ -1,20 +1,11 @@
 import webpack from 'webpack';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import common from './client.common';
-import dirs from '../configs/index';
-
 
 export default {
     ...common,
-    output: {
-        path: dirs.clientOutput,
-        publicPath: dirs.publicPath,
-        filename: `js/[name].js`,
-        chunkFilename: 'js/chunks/chunks[name].js',
-        pathinfo: true
-    },
-    mode: 'development',
     name: 'client',
-    devtool: 'cheap-module-source-map',
+    devtool: 'cheap-module-eval-source-map',
     module: {
         strictExportPresence: true,
         rules: [
@@ -70,6 +61,8 @@ export default {
     },
     plugins: [
         ...common.plugins,
+        // new BundleAnalyzerPlugin(),
+        new webpack.NamedChunksPlugin(),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('development')
         }),
