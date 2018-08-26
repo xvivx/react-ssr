@@ -3,24 +3,19 @@ import webpack from 'webpack';
 import express from 'express';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
-import config from '../webpack/client.config';
+import config from '../webpack/client.dev';
+import dirs from '../configs';
 
 
 var app = express();
-config.entry.unshift('webpack-hot-middleware/client?path=/www');
-
 var compiler = webpack(config);
 
 app.use(webpackDevMiddleware(compiler, {
     publicPath: config.output.publicPath,
-    stats: {
-        colors: true,
-        progress: true
-    },
 }));
 
+// option的path最好不要指定，以免不小心覆盖前端路由
 app.use(webpackHotMiddleware(compiler, {
-    path: '/www',
     heartbeat: 2000
 }));
 
@@ -40,6 +35,7 @@ app.get("*", (req, res, next) =>{
 
 
 
-app.listen(3000, function () {
-    console.log('---------');
+app.listen(dirs.port, function () {
+    console.info(`服务器已经启动在: http://localhost:${dirs.port}`);
+    console.log('请等待webpack编译。。。');
 });

@@ -21,7 +21,7 @@ const hotRender = Component => {
 
 if (module.hot) {
     module.hot.accept('./AppRoutes.js', () => {
-        hotRender(require('./AppRoutes.js').default);
+        hotRender(App);
     });
 }
 

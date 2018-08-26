@@ -1,9 +1,9 @@
 import React from 'react';
 
-import AddTodo from '../componentUI/todo/AddTodo';
-import ToDoList from '../componentUI/todo/ToDoList';
-import FooterFilter from '../componentUI/todo/FooterFilter';
-import todoHOC from '../container/todo/todoHOC';
+import AddTodo from '../../componentUI/todo/AddTodo';
+import ToDoList from '../../componentUI/todo/ToDoList';
+import FooterFilter from '../../componentUI/todo/FooterFilter';
+import todoHOC from '../../container/todo/todoHOC';
 
 
 export default todoHOC(props => {
@@ -22,4 +22,4 @@ export default todoHOC(props => {
             <ToDoList {...others} />
         </div>
     );
-})
+});

@@ -1,22 +1,22 @@
-import path from 'path';
 import webpack from 'webpack';
-import CleanWebpackPlugin from 'clean-webpack-plugin';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
+import common from './client.common';
 import dirs from '../configs/index';
 
 
 export default {
-    entry: [dirs.clientEntry],
+    ...common,
     output: {
         path: dirs.clientOutput,
         publicPath: dirs.publicPath,
         filename: `js/[name].js`,
+        chunkFilename: 'js/chunks/chunks[name].js',
         pathinfo: true
     },
     mode: 'development',
-    name: 'spa',
-    target: 'web',
+    name: 'client',
+    devtool: 'cheap-module-source-map',
     module: {
+        strictExportPresence: true,
         rules: [
             {
                 test: /\.jsx?$/,
@@ -26,6 +26,7 @@ export default {
                         loader: 'babel-loader',
                         options: {
                             babelrc: false,
+                            cacheDirectory: true,
                             presets: [
                                 ['@babel/preset-react', {
                                     useBuiltIns: true,
@@ -35,7 +36,8 @@ export default {
                             plugins: [
                                 ['@babel/plugin-proposal-class-properties', {
                                     loose: true
-                                }]
+                                }],
+                                ['syntax-dynamic-import'],
                             ]
                         }
                     }
@@ -67,11 +69,9 @@ export default {
         ]
     },
     plugins: [
-        new CleanWebpackPlugin(['build']),
-        new HtmlWebpackPlugin({
-            title: 'Hello Webpack',
-            template: path.resolve(dirs.clientEntry, '../index.html'),
-            filename: 'index.html'
+        ...common.plugins,
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('development')
         }),
         new webpack.HotModuleReplacementPlugin(),
     ]

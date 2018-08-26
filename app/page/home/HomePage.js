@@ -1,11 +1,11 @@
 import React from 'react';
-import Carousel from '../componentUI/common/Carousel';
-import Void from '../componentUI/common/Void';
+import Carousel from '../../componentUI/common/Carousel';
+import Void from '../../componentUI/common/Void';
 
-import img1 from '../styles/img/bg_pic1.jpg';
-import img2 from '../styles/img/bg_pic2.jpg';
-import img3 from '../styles/img/bg_pic3.jpg';
-import img4 from '../styles/img/bg_pic4.jpg';
+import img1 from '../../styles/img/bg_pic1.jpg';
+import img2 from '../../styles/img/bg_pic2.jpg';
+import img3 from '../../styles/img/bg_pic3.jpg';
+import img4 from '../../styles/img/bg_pic4.jpg';
 
 // 定义轮播内容
 const data = [img1, img2, img3, img4].map((item, index) => (
@@ -14,6 +14,7 @@ const data = [img1, img2, img3, img4].map((item, index) => (
         <img src={item} title={item}/>
     </div>
 ));
+
 
 
 export default props => {
