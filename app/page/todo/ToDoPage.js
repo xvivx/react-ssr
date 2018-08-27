@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatDate } from 'idiv-utils';
 
 import AddTodo from '../../componentUI/todo/AddTodo';
 import ToDoList from '../../componentUI/todo/ToDoList';
@@ -8,6 +9,9 @@ import todoHOC from '../../container/todo/todoHOC';
 
 export default todoHOC(props => {
     const {dispatchAddTodo, dispatchFilter, ...others} = props;
+
+    console.log(formatDate(Date.now()))
+
     return (
         <div className="container">
             <div className="page-header">

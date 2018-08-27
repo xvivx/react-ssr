@@ -62,10 +62,6 @@ export default {
     plugins: [
         ...common.plugins,
         // new BundleAnalyzerPlugin(),
-        new webpack.NamedChunksPlugin(),
-        new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('development')
-        }),
         new webpack.HotModuleReplacementPlugin(),
     ]
 }

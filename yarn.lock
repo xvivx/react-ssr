@@ -2642,6 +2642,10 @@ icss-utils@^2.1.0:
   dependencies:
     postcss "^6.0.1"
 
+idiv-utils@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/idiv-utils/-/idiv-utils-1.1.1.tgz#93f68766f969be4f057212ff2bc86c32cfb8503f"
+
 ieee754@^1.1.11, ieee754@^1.1.4:
   version "1.1.12"
   resolved "http://registry.npm.taobao.org/ieee754/download/ieee754-1.1.12.tgz#50bf24e5b9c8bb98af4964c941cdb0918da7b60b"

@@ -1,6 +1,7 @@
 import React from 'react';
 import Carousel from '../../componentUI/common/Carousel';
 import Void from '../../componentUI/common/Void';
+import { formatDate } from 'idiv-utils';
 
 import img1 from '../../styles/img/bg_pic1.jpg';
 import img2 from '../../styles/img/bg_pic2.jpg';
@@ -18,6 +19,7 @@ const data = [img1, img2, img3, img4].map((item, index) => (
 
 
 export default props => {
+    console.log(formatDate(Date.now()))
     return (
         <Void>
             <div className="container">

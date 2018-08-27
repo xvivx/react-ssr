@@ -59,19 +59,6 @@ export default {
             }
         ]
     },
-    optimization: {
-        runtimeChunk: 'single',
-        splitChunks: {
-            chunks: 'all',
-            cacheGroups: {
-                commons: {
-                    chunks: 'all',
-                    test: /[\\/]node_modules[\\/]/,
-                    name: true,
-                },
-            },
-        },
-    },
     plugins: [
         ...common.plugins,
         new CleanWebpackPlugin([dirs.clientOutput], {

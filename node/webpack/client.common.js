@@ -1,5 +1,4 @@
 import path from 'path';
-import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import dirs from '../configs/index';
 import { env } from '../utils';
@@ -11,10 +10,11 @@ export default {
     entry: {
         // 开发模式下启用热更新
         app: (isDev ? [`webpack-hot-middleware/client`] : []).concat(dirs.clientEntry),
-        vendor: [
+        vendors: [
             'react',
             'react-dom',
             'react-router',
+            'react-router-dom',
             'redux',
             'redux-thunk',
             'react-redux'
@@ -32,14 +32,19 @@ export default {
             template: path.resolve(dirs.clientEntry, '../index.html'),
             filename: 'index.html'
         }),
-        new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify(isDev ? 'development' : 'production')
-        }),
     ],
-    // optimization: {
-    //     splitChunks: {
-    //         chunks: 'all',
-    //     },
-    // },
+    optimization: {
+        runtimeChunk: 'single',
+        splitChunks: {
+            chunks: 'all',
+            cacheGroups: {
+                node_modules: {
+                    chunks: 'all',
+                    test: /[\\/]node_modules[\\/]/,
+                    name: true,
+                },
+            },
+        },
+    },
     target: 'web',
 };
