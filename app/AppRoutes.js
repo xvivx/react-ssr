@@ -15,7 +15,7 @@ const PrimaryLayout = ({ match }) => (
     <div className="idiv-app">
         <NavBar data={navConfig} />
         <Switch>
-            <Route exact path="/" component={HomePage} />
+            <Route exact path="/contract" component={HomePage} />
             <Route exact path="/todo" component={ToDoPage} />
         {
             routes.map(route => page(route))

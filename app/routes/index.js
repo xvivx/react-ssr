@@ -16,5 +16,9 @@ export default [
     }, {
         path: '/olami',
         component: dynamic(() => import(/* webpackChunkName: 'olami' */'../page/OlamiPage'))
+    }, {
+        path: '/',
+        exact: true,
+        component: dynamic(() => import(/* webpackChunkName: 'contract' */'../page/contract'))
     }
 ];
