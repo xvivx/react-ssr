@@ -1,5 +1,6 @@
 import React from 'react';
 import './style.less';
+import loading from './loading';
 
 export default class extends React.PureComponent {
     constructor(props) {
@@ -34,7 +35,7 @@ export default class extends React.PureComponent {
     }
 
     componentDidMount() {
-       
+       loading.show(false);
     }
 
     onSignLoad = (e) => {
