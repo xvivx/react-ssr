@@ -63,5 +63,10 @@ export default {
         ...common.plugins,
         // new BundleAnalyzerPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-    ]
+    ],
+    optimization: {
+        removeAvailableModules: false,
+        removeEmptyChunks: false,
+        splitChunks: false,
+    },
 }

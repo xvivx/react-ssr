@@ -7,5 +7,5 @@ export default {
     clientEntry: path.resolve(root, 'app/index.js'),
     clientOutput: path.resolve(root, 'build'),
     publicPath: '/',
-    port: process.env.port || 3000
+    port: process.env.port || 5000
 };

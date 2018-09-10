@@ -4,7 +4,7 @@
   "description": "study react",
   "private": true,
   "scripts": {
-    "start": "babel-node node/spa/start --development",
+    "start": "babel-node node/spa/start --development --watch",
     "build": "babel-node node/spa/build"
   },
   "keywords": [
@@ -16,6 +16,7 @@
   "dependencies": {
     "express": "^4.16.3",
     "idiv-utils": "^1.1.1",
+    "moment": "^2.22.2",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-loadable": "^5.5.0",
@@ -45,6 +46,7 @@
     "less-loader": "^4.1.0",
     "style-loader": "^0.22.1",
     "webpack": "^4.17.1",
+    "webpack-assets-manifest": "^3.0.2",
     "webpack-bundle-analyzer": "^2.13.1",
     "webpack-cli": "^3.1.0",
     "webpack-dev-middleware": "^3.2.0",

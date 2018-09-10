@@ -1,5 +1,7 @@
 import path from 'path';
+import fs from 'fs';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import WebpackAssetsManifest from 'webpack-assets-manifest';
 import dirs from '../configs/index';
 import { env } from '../utils';
 
@@ -31,6 +33,41 @@ export default {
             title: 'Hello Webpack',
             template: path.resolve(dirs.clientEntry, '../index.html'),
             filename: 'index.html'
+        }),
+        new WebpackAssetsManifest({
+            output: `${dirs.clientOutput}/asset-manifest.json`,
+            publicPath: true,
+            writeToDisk: true,
+            customize: ({ key, value }) => {
+                if (key.toLowerCase().endsWith('.map')) return false;
+                return { key, value };
+            },
+            done: (manifest, stats) => {
+                // chunk-manifest.json.json
+                var chunkFileName = `${dirs.clientOutput}/chunk-manifest.json`;
+                try {
+                    var fileFilter = file => !file.endsWith('.map');
+                    var addPath = file => manifest.getPublicPath(file);
+                    var chunkFiles = stats.compilation.chunkGroups.reduce((acc, c) => {
+                        acc[c.name] = [
+                            ...(acc[c.name] || []),
+                            ...c.chunks.reduce(
+                                (files, cc) => [
+                                    ...files,
+                                    ...cc.files.filter(fileFilter).map(addPath),
+                                ],
+                                [],
+                            ),
+                        ];
+                        return acc;
+                    }, Object.create(null));
+
+                    fs.writeFileSync(chunkFileName, JSON.stringify(chunkFiles, null, 2));
+                } catch (err) {
+                    console.error(`ERROR: Cannot write ${chunkFileName}: `, err);
+                    if (!isDev) process.exit(1);
+                }
+            },
         }),
     ],
     optimization: {

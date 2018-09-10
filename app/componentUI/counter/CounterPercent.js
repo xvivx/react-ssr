@@ -3,6 +3,7 @@ import React from 'react';
 export default ({counter = 0}) => {
     const percent = Math.max(Math.min(counter / 100, 1) * 100, 0) .toFixed(0)+ '%';
     const activeClass = (counter < 0 || counter > 100) ? '' : 'active';
+
     return (
         <div className="container page-header">
             <div 
@@ -15,4 +16,4 @@ export default ({counter = 0}) => {
             </div>
         </div>
     );
-}
+};
