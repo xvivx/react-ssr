@@ -7,7 +7,7 @@ export default [
         exact: true,
     }, {
         path: '/todo',
-        component: dynamic(import(/* webpackChunkName: 'todo' */'../page/ToDoPage'))
+        component: dynamic(() => import(/* webpackChunkName: 'todo' */'../page/ToDoPage'))
     }, {
         path: '/counter',
         component: dynamic(() => import(/* webpackChunkName: 'counter' */'../page/CounterPage'))

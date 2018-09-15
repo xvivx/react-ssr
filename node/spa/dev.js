@@ -4,7 +4,7 @@ import express from 'express';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import moment from 'moment';
-import { asynchronization } from './utils';
+import { asynchronization } from '../utils/index';
 import config from '../webpack/client.dev';
 import dirs from '../configs';
 

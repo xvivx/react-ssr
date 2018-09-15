@@ -4,8 +4,9 @@
   "description": "study react",
   "private": true,
   "scripts": {
-    "start": "babel-node node/spa/start --development --watch",
-    "build": "babel-node node/spa/build"
+    "start": "babel-node node/spa/dev --development",
+    "build": "babel-node node/spa/build",
+    "dll": "babel-node node/spa/dll"
   },
   "keywords": [
     "react",
@@ -36,6 +37,7 @@
     "@babel/preset-env": "^7.0.0-rc.2",
     "@babel/preset-react": "^7.0.0-rc.2",
     "@babel/runtime": "^7.0.0-rc.3",
+    "add-asset-html-webpack-plugin": "^2.1.3",
     "babel-loader": "^8.0.0-beta.0",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "clean-webpack-plugin": "^0.1.19",

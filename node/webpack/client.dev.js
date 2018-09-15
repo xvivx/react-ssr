@@ -2,7 +2,7 @@ import webpack from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import common from './client.common';
 
-export default {
+var config = {
     ...common,
     name: 'client',
     devtool: 'cheap-module-eval-source-map',
@@ -69,4 +69,6 @@ export default {
         removeEmptyChunks: false,
         splitChunks: false,
     },
-}
+};
+
+export default config;

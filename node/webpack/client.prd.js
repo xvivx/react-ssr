@@ -1,5 +1,6 @@
 import webpack from 'webpack';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
+import AddAssetHtmlPlugin from 'add-asset-html-webpack-plugin';
 import dirs from '../configs/index';
 import common from './client.common';
 
@@ -59,15 +60,39 @@ export default {
             }
         ]
     },
+    optimization: {
+        runtimeChunk: 'single',
+        splitChunks: {
+            chunks: 'all',
+            cacheGroups: {
+                node_modules: {
+                    chunks: 'all',
+                    test: /[\\/]node_modules[\\/]/,
+                    name: true,
+                },
+            },
+        },
+    },
     plugins: [
         ...common.plugins,
         new CleanWebpackPlugin([dirs.clientOutput], {
             root: dirs.root,
+            exclude: ['dll']
         }),
         new webpack.HashedModuleIdsPlugin({
             hashFunction: 'sha256',
             hashDigest: 'hex',
             hashDigestLength: 20
-        })
+        }),
+        new webpack.DllReferencePlugin({
+            context: __dirname,
+            manifest: require(dirs.dll + '/vendors-manifest.json')
+        }),
+        new AddAssetHtmlPlugin({
+            filepath: dirs.dll + '/vendors.dll.js',
+            hash: true,
+            includeSourcemap: false,
+            publicPath: dirs.publicPath
+        }),
     ],
 };
