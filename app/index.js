@@ -1,28 +1,30 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import { hydrate, render } from 'react-dom';
+import { renderRoutes } from 'react-router-config';
 import { BrowserRouter } from 'react-router-dom';
+import routes from './routes/app.routes';
 
-import store from './redux/store/store.js';
-import App from './AppRoutes';
-
-
-const hotRender = Component => {
-    ReactDOM.render(
-            <Provider store={ store }>
-                <BrowserRouter>
-                    <Component />
-                </BrowserRouter>
-            </Provider>,
-        document.getElementById('root')
+var container = document.getElementById('root');
+var hotRender = () => {
+    hydrate(
+        <BrowserRouter>
+        {
+            renderRoutes(routes)
+        }
+        </BrowserRouter>,
+        container
     );
 };
 
 
-if (module.hot) {
-    module.hot.accept('./AppRoutes.js', () => {
-        hotRender(App);
+try {
+    module.hot.accept('./routes/app.routes', () => {
+        hotRender();
     });
+} catch(err) {
+    if(process.env.NODE_ENV === 'development') {
+        throw new Error(err);
+    }
 }
 
-hotRender(App);
+hotRender();
