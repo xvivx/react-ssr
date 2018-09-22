@@ -1,13 +1,15 @@
 import path from 'path';
 import webpack from 'webpack';
 import express from 'express';
-import config from '../webpack/client.dev.config';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
+
+import defineConfig from '../webpack/client.dev.config';
 import dirs from '../config/index';
 
 
 var app = express();
+var config = defineConfig({ type: 'spa' });
 var compiler = webpack(config);
 var compilerPromise = new Promise((resolve) => {
     compiler.hooks.done.tap('client-complete', (stats) => {
@@ -25,6 +27,9 @@ async function start() {
     app.use(webpackDevMiddleware(compiler, {
         publicPath: '/',
         logTime: true,
+        wacthOptions: {
+            ignored: /node_modules/,
+        }
     }));
 
     app.use(webpackHotMiddleware(compiler));

@@ -5,8 +5,9 @@ import { BrowserRouter } from 'react-router-dom';
 import routes from './routes/app.routes';
 
 var container = document.getElementById('root');
+var renderMthod = process.env.type === 'spa' ? render : hydrate;
 var hotRender = () => {
-    hydrate(
+    renderMthod(
         <BrowserRouter>
         {
             renderRoutes(routes)

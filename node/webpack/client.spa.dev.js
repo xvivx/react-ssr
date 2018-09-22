@@ -1,6 +1,7 @@
 import path from 'path';
 import dirs from '../config/index';
 import webpack from 'webpack';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 export default (options) => {
     return {
@@ -45,7 +46,11 @@ export default (options) => {
                 'process.env.NODE_ENV': JSON.stringify('development'),
                 'process.env.type': JSON.stringify(options.type || 'spa')
             }),
-            
+            new HtmlWebpackPlugin({
+                title: 'Hello Webpack',
+                template: path.resolve(dirs.client, 'public/index.html'),
+                filename: 'index.html'
+            }),
             new webpack.HotModuleReplacementPlugin()
         ],
         optimization: {

@@ -5,15 +5,24 @@
   "license": "MIT",
   "scripts": {
     "spa:dev": "babel-node node/spa/dev",
-    "ssr:dev": "babel-node node/ssr/dev"
+    "ssr:dev": "babel-node node/ssr/dev",
+    "spa:build": "babel-node node/spa/build",
+    "ssr:debug": "babel-node node/ssr/dev --inspect-brk=9292",
+    "ssr:dist": "babel-node node/ssr/build"
   },
   "dependencies": {
+    "ejs": "^2.6.1",
     "express": "^4.16.3",
+    "helmet": "^3.13.0",
+    "idiv-utils": "^1.1.1",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
+    "react-helmet": "^5.2.0",
+    "react-loadable": "^5.5.0",
     "react-router": "^4.3.1",
     "react-router-config": "^1.0.0-beta.4",
-    "react-router-dom": "^4.3.1"
+    "react-router-dom": "^4.3.1",
+    "react-universal-component": "^3.0.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
@@ -22,9 +31,15 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.2",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "browser-sync": "^2.24.7",
     "html-webpack-plugin": "^3.2.0",
+    "nodemon": "^1.18.4",
+    "react-dev-utils": "^5.0.2",
     "webpack": "^4.19.1",
     "webpack-dev-middleware": "^3.3.0",
-    "webpack-hot-middleware": "^2.24.1"
+    "webpack-flush-chunks": "^2.0.1",
+    "webpack-hot-middleware": "^2.24.1",
+    "webpack-hot-server-middleware": "^0.5.0"
   }
 }

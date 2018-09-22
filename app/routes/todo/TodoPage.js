@@ -7,7 +7,7 @@ export default class Todo extends React.PureComponent {
 
         this.state = {
             task: [
-                '学习http',
+                '学习http2',
                 '深入学习node，方向：高性能server',
                 '深入webpack，方向：高性能打包，理解背后原理',
                 'redux相关技术，方向：阅读源码，深入理解设计思想，抽象设计模式'

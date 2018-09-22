@@ -1,10 +1,14 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 
 export default ({ route }) => {
     return (
         <div>
-            <h1>项目导航。。。</h1>
+            <ul>
+                <NavLink to="/">首页</NavLink>
+                <NavLink to="/todo">todo</NavLink>
+            </ul>
             {
                 renderRoutes(route.routes)
             }
