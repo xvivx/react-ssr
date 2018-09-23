@@ -5,17 +5,18 @@ export var changeToPromise = function (compiler, config) {
     var lines = config.name === 'client' ? '='.repeat(50) : '-'.repeat(50);
     
     return new Promise((resolve, reject) => {
-        var timeStart = new Date();
+        var timeStart = null;
+
         compiler.hooks.compile.tap(config.name, () => {
-            var time = timeStart.toLocaleTimeString();
-            print(`[${time}]: 开始编译 '${config.name}'...`, color);
+            timeStart = new Date();
+            print(`[${timeStart.toLocaleTimeString()}]: 开始编译 '${config.name}'...`, color);
         });
+
         compiler.hooks.done.tap(config.name, (stats) => {
-            var time = timeStart.toLocaleTimeString();
+            var endTime = new Date();
             var { errors, warnings } = stats.compilation || {};
 
-            print(`[${time}]: 完成${config.name} ${Date.now() - timeStart}ms`, color);
-            timeStart = new Date();
+            print(`[${endTime.toLocaleTimeString()}]: 完成${config.name} ${endTime - timeStart}ms`, color);
 
             if(errors.length) {
                 reject(errors);

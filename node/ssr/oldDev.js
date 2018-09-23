@@ -5,7 +5,7 @@ import express from 'express';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import dirs from '../config/index';
-import config from '../webpack/client.dev.config';
+import calcConfig from '../webpack/client.dev.config';
 
 // 前端框架和前端代码
 import React from 'react';
@@ -13,15 +13,20 @@ import ReactDOMServer from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import routes from '../../app/routes/app.routes';
+import Loadable from 'react-loadable';
 
 
 var app = express();
+var config = calcConfig({type: 'ssr'});
 var compiler = webpack(config);
 var indexHtml = '';
 var compilerResolve = null;
 var compilerPromise = new Promise((resolve) => {
     compilerResolve = resolve;
 });
+
+
+
 
 compiler.hooks.compile.tap('ClientCompile', () => {
     console.log(new Date().toLocaleTimeString() + '开始编译。。。');
@@ -61,7 +66,9 @@ async function ssrRender (req, res, next) {
     );
 
     res.set('Content-Type', 'text/html');
-    res.send(indexHtml.replace('<div id="root"></div>', `<div id="root">${html}</div>`));
+    res.send(indexHtml.replace('<div id="root"></div>', `<div id="root">${html}</div>`).replace('</body>', `
+        <script>window.main()</script></body>
+    `));
     res.end();
 }
 
@@ -101,6 +108,7 @@ async function start() {
         res.send(`请求${req.url}时发生服务器错误\n${err.stack}`);
     });
 
+    await Loadable.preloadAll();
     app.listen(dirs.port, function () {
         console.info(`服务器已经启动在: http://localhost:${dirs.port}`);
     });

@@ -5,6 +5,6 @@ export default function (loader, Loading) {
    
     return Loadable({
         loader: typeof loader === 'function' ? loader : () => loader,
-        loading: Loading ? <Loading /> : () => (<div>Loading</div>),
+        loading: Loading ? Loading : () => (<div>Loading</div>),
     });
 };

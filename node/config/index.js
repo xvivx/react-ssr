@@ -1,3 +1,4 @@
+
 import path from 'path';
 
 var root = path.resolve('');
@@ -7,6 +8,7 @@ export default {
     client: path.resolve(root, 'app'),
     server: path.resolve(root, 'node/server'),
     deploy: path.resolve(root, 'deploy'),
+    stats: path.resolve(root, 'deploy/stats/react-loadable.json'),
     publicPath: '/',
-    port: 3000
+    port: 3000,
 };

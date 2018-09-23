@@ -8,8 +8,12 @@ module.exports = {
                 }
             }
         ], [
-            '@babel/preset-react',
-            {}
+            '@babel/preset-react', {}
         ]
-    ]
+    ],
+    plugins: [  
+        'syntax-dynamic-import',
+        "react-loadable/babel"
+    ],
+    ignore: ['node_modules', 'deploy'],
 };

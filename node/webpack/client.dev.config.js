@@ -1,6 +1,8 @@
 import path from 'path';
 import dirs from '../config/index';
 import webpack from 'webpack';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import {ReactLoadablePlugin} from 'react-loadable/webpack';
 
 export default (options) => {
     return {
@@ -12,9 +14,9 @@ export default (options) => {
             ]
         },
         output: {
-            path: path.resolve(dirs.deploy, '/client'),
+            path: path.resolve(dirs.deploy, 'client'),
             filename: '[name].js',
-            chunkFilename: 'chunks/[name].[chunkhash:5].js',
+            chunkFilename: 'chunks/[name].js',
             publicPath: dirs.publicPath
         },
         target: 'web',
@@ -33,6 +35,9 @@ export default (options) => {
                                 cacheDirectory: true,
                                 presets: [
                                     '@babel/preset-react'
+                                ],
+                                plugins: [
+                                    ['syntax-dynamic-import'],
                                 ]
                             }
                         }
@@ -43,10 +48,17 @@ export default (options) => {
         plugins: [
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify('development'),
-                'process.env.type': JSON.stringify(options.type || 'spa')
+                'process.env.RENDER_TYPE': JSON.stringify(options.type || 'spa')
             }),
-            
-            new webpack.HotModuleReplacementPlugin()
+            new HtmlWebpackPlugin({
+                title: 'Hello Webpack',
+                template: path.resolve(dirs.client, 'public/index.html'),
+                filename: 'index.html'
+            }),
+            new webpack.HotModuleReplacementPlugin(),
+            new ReactLoadablePlugin({
+                filename:  dirs.stats,
+            }),
         ],
         optimization: {
             removeAvailableModules: false,
