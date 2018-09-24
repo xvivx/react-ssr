@@ -102,9 +102,8 @@ export default (options) => {
             }),
             new ExtractCssChunks(
                 {
-                    filename: '[name].css',
-                    chunkFilename: '[name]-[id].css',
-                    hot: true
+                    filename: 'css/[name].css',
+                    chunkFilename: 'css/[name].[hash:5].css',
                 }
             ),
             new CleanWebpackPlugin(['client'], {

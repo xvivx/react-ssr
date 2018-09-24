@@ -11,7 +11,7 @@ var isDev = env('development');
 export default {
     name: 'server',
     entry: {
-        server: [path.resolve(dirs.server, 'index.js')],
+        server: [path.resolve(dirs.server, isDev ? 'index.js' : 'index.prd.js')],
     },
     cache: isDev,
     output: {

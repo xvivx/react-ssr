@@ -17,7 +17,8 @@ export var changeToPromise = function (compiler, config) {
             var { errors, warnings } = stats.compilation || {};
 
             if(errors.length) {
-                reject(errors[0]);
+                // reject(errors[0]);
+                console.info(errors[0]);
                 return;
             }
 

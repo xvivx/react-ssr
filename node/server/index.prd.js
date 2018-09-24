@@ -9,28 +9,26 @@ import { getBundles } from 'react-loadable/webpack'
 
 import routes from '../../app/routes/app.routes';
 import dirs from '../config/index';
-
+import { print } from '../utils/log';
 
 var app = express();
+var indexHtml = fs.readFileSync(dirs.deploy + '/client/index.html').toString();
+var statsJson = fs.readFileSync(dirs.stats).toString();
+var stats = JSON.parse(statsJson);
 
 async function ssrRender(req, res, next) {
     try {
         var modules = [];
-        var str = fs.readFileSync(dirs.stats).toString();
-        var stats = JSON.parse(str);
-
-        await Loadable.preloadAll();
-
         var context = {};
-        var ssr = ReactDOMServer.renderToString(
+        var ssrHtml = ReactDOMServer.renderToString(
             <Loadable.Capture report={moduleName => modules.push(moduleName)}>
                 <StaticRouter
                     location={req.url}
                     context={context}
                 >
-                    {
-                        renderRoutes(routes)
-                    }
+                {
+                    renderRoutes(routes)
+                }
                 </StaticRouter>
             </Loadable.Capture>
         );
@@ -45,38 +43,45 @@ async function ssrRender(req, res, next) {
         }).join('\n') + '<script>window.PREALOAD_DONE && window.PREALOAD_DONE()</script>';
 
         res.send(
-            global.INDEX_HTML.
-                replace('</head>', `${styles}</head>`).
-                replace('<div id="root"></div>', `<div id="root">${ssr}</div>`).
-                replace('</body>', `${scripts}</body>`)
+            indexHtml.
+            replace('</head>', `${styles}</head>`).
+            replace('<div id="root"></div>', `<div id="root">${ssrHtml}</div>`).
+            replace('</body>', `${scripts}</body>`)
         );
     } catch (err) {
         next(err);
     }
 }
 
-app.get('^/$', ssrRender);
-app.use(global.CLIENT_INS);
-app.get('/*', ssrRender);
+async function start() {
+    app.use(function (req, res, next) {
+        console.log(req.method, '-->', req.path);
+        next();
+    });
+    app.get('^/$', ssrRender);
+    app.use(express.static(dirs.deploy + '/client'));
+    app.get('/*', ssrRender);
 
-app.use((req, res, next) => {
-    res.status(404);
-    res.render('404');
-});
+    app.use((req, res, next) => {
+        res.status(404);
+        res.render('404');
+    });
+    
+    app.use((err, req, res, next) => {
+        res.status(err.status || 500);
+    
+        console.info(err.stack);
+        res.send(`服务端错误，请联系开发报告一个bug`);
+    });
 
-app.use((err, req, res, next) => {
-    res.status(err.status || 500);
+    await Loadable.preloadAll();
 
-    console.info(err.stack);
-    res.send(`${err.stack.replace(/at/g, '<br>at')}`);
-});
-
-
-if (module.hot) {
-    app.hot = module.hot;
-    module.hot.accept('../../app/routes/app.routes');
+    app.listen(dirs.port, () => {
+        print(`服务已经运行在http://localhost:${dirs.port}`);
+    });
 }
 
+start();
 
 export default app;
 

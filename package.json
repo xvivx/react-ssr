@@ -5,15 +5,14 @@
   "license": "MIT",
   "scripts": {
     "spa:dev": "babel-node node/spa/dev",
-    "ssr:dev": "babel-node node/ssr/start --development",
     "spa:build": "babel-node node/spa/build",
+    "ssr:dev": "babel-node node/ssr/start --development",
     "ssr:debug": "babel-node node/ssr/dev --inspect-brk=9292",
-    "ssr:dist": "babel-node node/ssr/build",
+    "ssr:build": "babel-node node/ssr/build",
     "dll": "babel-node node/dll/dll"
   },
   "dependencies": {
     "express": "^4.16.3",
-    "helmet": "^3.13.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-loadable": "^5.5.0",

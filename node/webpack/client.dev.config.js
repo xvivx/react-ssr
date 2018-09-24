@@ -94,8 +94,8 @@ export default (options) => {
             }),
             new ExtractCssChunks(
                 {
-                    filename: '[name].css',
-                    chunkFilename: '[name]-[id].css',
+                    filename: 'css/[name].css',
+                    chunkFilename: 'css/[name].[hash:5].css',
                     hot: true 
                 }
             ),

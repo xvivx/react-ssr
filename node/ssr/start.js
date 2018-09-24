@@ -79,6 +79,8 @@ async function start() {
     server.listen(dirs.port, () => {
         print(`服务已经启动在: http://localhost:${dirs.port}`);
     });
+
+    return server;
 }
 
 process.on('unhandledRejection', (err) => {
@@ -87,8 +89,6 @@ process.on('unhandledRejection', (err) => {
     console.error(err);
     process.exit(1);
 });
-
-start();
 
 
 function checkForUpdate(fromUpdate) {
@@ -136,3 +136,6 @@ function checkForUpdate(fromUpdate) {
         })
     );
 }
+
+
+export default start();
