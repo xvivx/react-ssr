@@ -1,25 +1,31 @@
 import path from 'path';
 import webpack from 'webpack';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
-import dirs from '../config/index';
 import nodeExternals from 'webpack-node-externals';
 
+import dirs from '../config/index';
+import { env } from '../utils/env';
+
+var isDev = env('development');
 
 export default {
     name: 'server',
     entry: {
         server: [path.resolve(dirs.server, 'index.js')],
     },
+    cache: isDev,
     output: {
         path: path.resolve(dirs.deploy, 'server'),
         filename: '[name].js',
         chunkFilename: 'chunks/[name].js',
         libraryTarget: 'commonjs2',
-        publicPath: dirs.publicPath
+        publicPath: dirs.publicPath,
+        devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
     },
+    context: dirs.server,
     mode: 'development',
     target: 'node',
-    devtool: 'cheap-module-eval-source-map',
+    devtool: isDev ? 'cheap-module-eval-source-map' : 'source-map',
     module: {
         strictExportPresence: true,
         rules: [
@@ -36,7 +42,8 @@ export default {
                                 '@babel/preset-react'
                             ],
                             plugins: [
-                                ['react-loadable/babel'],
+                                'syntax-dynamic-import',
+                                'react-loadable/babel'
                             ]
                         }
                     }
@@ -46,6 +53,16 @@ export default {
                 use: [
                     'null-loader'
                 ]
+            }, {
+                test: /\.(jpg|png|gif|jpeg)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: 'assets/[name].[ext]'
+                        }
+                    }
+                ]
             }
         ]
     },
@@ -53,10 +70,10 @@ export default {
         new webpack.DefinePlugin({
             'process.env.BROWSER': false,
         }),
-        new webpack.HotModuleReplacementPlugin(),
         new CleanWebpackPlugin(['server'], {
             root: dirs.deploy,
         }),
+        ...(isDev ? [new webpack.HotModuleReplacementPlugin()] : [])
     ],
     optimization: {
         removeAvailableModules: false,
@@ -65,7 +82,13 @@ export default {
     },
     stats: {
         colors: true,
-        timings: true
+        timings: isDev,
+        exclude: /node_modules/,
+        builtAt: false,
+        context: dirs.server,
+        modules: false,
+        reasons: isDev,
+        cachedAssets: isDev
     },
     externals: [
         nodeExternals()

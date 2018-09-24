@@ -4,19 +4,30 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
 import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 import { ReactLoadablePlugin } from 'react-loadable/webpack';
+import AddAssetHtmlPlugin from 'add-asset-html-webpack-plugin';
 
 import dirs from '../config/index';
-import { env } from '../utils/env';
 
-
-var isDev = env('development');
+var presetEnv = {
+    targets: {
+        browsers: [
+            ">1%",
+            "last 4 versions",
+            "Firefox ESR",
+            "not ie < 9"
+        ],
+    },
+    forceAllTransforms: true,
+    modules: false,
+    useBuiltIns: false,
+    debug: false,
+};
 
 export default (options) => {
     return {
         name: 'client',
         entry: {
             client: [
-                'webpack-hot-middleware/client',
                 path.resolve(dirs.client, 'index.js')
             ]
         },
@@ -27,27 +38,24 @@ export default (options) => {
             publicPath: dirs.publicPath,
             devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
         },
-        cache: true,
         target: 'web',
-        mode: 'development',
-        devtool: 'cheap-module-eval-source-map',
+        mode: 'production',
+        devtool: 'none',
         module: {
             rules: [
                 {
                     test: /\.jsx?$/,
-                    exclude: /(node_modules)/,
                     use: [
                         {
                             loader: 'babel-loader',
                             options: {
                                 babelrc: false,
-                                cacheDirectory: true,
                                 presets: [
-                                    '@babel/preset-react'
+                                    ['@babel/preset-env', presetEnv],
+                                    ['@babel/preset-react']
                                 ],
                                 plugins: [
-                                    'syntax-dynamic-import',
-                                    'react-loadable/babel'
+                                    ['syntax-dynamic-import'],
                                 ]
                             }
                         }
@@ -96,24 +104,41 @@ export default (options) => {
                 {
                     filename: '[name].css',
                     chunkFilename: '[name]-[id].css',
-                    hot: true 
+                    hot: true
                 }
             ),
+            new CleanWebpackPlugin(['client'], {
+                root: dirs.deploy,
+            }),
+            new webpack.DllReferencePlugin({
+                context: __dirname,
+                manifest: require(dirs.deploy + '/dll/vendors-manifest.json')
+            }),
+            new AddAssetHtmlPlugin({
+                filepath: path.resolve(dirs.deploy, 'dll/vendors.dll.js'),
+                hash: true,
+                includeSourcemap: false,
+                publicPath: dirs.publicPath
+            }),
         ],
         optimization: {
-            removeAvailableModules: false,
-            removeEmptyChunks: false,
-            splitChunks: false,
+            runtimeChunk: 'single',
+            splitChunks: {
+                chunks: 'all',
+                cacheGroups: {
+                    node_modules: {
+                        chunks: 'all',
+                        test: /[\\/]node_modules[\\/]/,
+                        name: true,
+                    },
+                },
+            },
         },
         stats: {
             colors: true,
-            timings: isDev,
-            exclude: /node_modules/,
-            builtAt: false,
-            context: dirs.server,
             modules: false,
-            reasons: isDev,
-            cachedAssets: isDev
+            version: false,
+            hash: false
         },
     }
 }

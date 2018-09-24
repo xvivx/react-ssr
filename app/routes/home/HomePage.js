@@ -1,5 +1,6 @@
 import React from 'react';
 
+import bg from '../../assets/imgs/title.jpg'
 import './style.less';
 
 export default class Home extends React.PureComponent {
@@ -15,6 +16,7 @@ export default class Home extends React.PureComponent {
                 <h1>Home Page</h1>
                 <div>
                     This is home page content ...
+                    <img src={bg} alt=""/>
                 </div>
             </div>
         );

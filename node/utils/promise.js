@@ -16,16 +16,15 @@ export var changeToPromise = function (compiler, config) {
             var endTime = new Date();
             var { errors, warnings } = stats.compilation || {};
 
-            print(`[${endTime.toLocaleTimeString()}]: 完成${config.name} ${endTime - timeStart}ms`, color);
-
             if(errors.length) {
-                reject(errors);
+                reject(errors[0]);
                 return;
             }
 
             print(lines, 'white');
             print(stats.toString(config.stats), color);
             print(lines, 'white');
+            print(`[${endTime.toLocaleTimeString()}]: 完成${config.name} ${endTime - timeStart}ms`, color);
 
             if(warnings.length) {
                 warnings.forEach(console.warn);

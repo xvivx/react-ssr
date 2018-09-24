@@ -1,5 +1,6 @@
 import React from 'react';
 import Loadable from 'react-loadable';
+import dynamic from '../utils/dynamic';
 import App from './App';
 
 var Loading = (props) => <div>Loading...</div>;
@@ -44,4 +45,24 @@ export default [{
         }
     ]
 }];
+
+
+// export default [{
+//     component: App,
+//     routes: [
+//         {
+//             path: '/',
+//             component: dynamic(() => import(/* webpackChunkName: 'home' */ './home/HomePage')),
+//             exact: true
+//         }, {
+//             path: '/todo',
+//             component: dynamic(() => import(/* webpackChunkName: 'todo' */ './todo/TodoPage'))
+//         }, {
+//             path: '/contact',
+//             component: dynamic(() => import(/* webpackChunkName: 'contact' */ './contact/ContactPage'))
+//         }, {
+//             component: dynamic(() => import(/* webpackChunkName: 'not-found' */ './others/NotFoundPage'))
+//         }
+//     ]
+// }];
 
