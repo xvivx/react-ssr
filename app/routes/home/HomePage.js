@@ -1,5 +1,6 @@
 import React from 'react';
 
+import './style.less';
 
 export default class Home extends React.PureComponent {
     constructor(props) {
@@ -10,7 +11,7 @@ export default class Home extends React.PureComponent {
 
     render() {
         return (
-            <div>
+            <div className="container">
                 <h1>Home Page</h1>
                 <div>
                     This is home page content ...

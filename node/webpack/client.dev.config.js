@@ -1,8 +1,12 @@
 import path from 'path';
-import dirs from '../config/index';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import {ReactLoadablePlugin} from 'react-loadable/webpack';
+import CleanWebpackPlugin from 'clean-webpack-plugin';
+import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
+import { ReactLoadablePlugin } from 'react-loadable/webpack';
+
+import dirs from '../config/index';
+
 
 export default (options) => {
     return {
@@ -42,6 +46,19 @@ export default (options) => {
                             }
                         }
                     ]
+                }, {
+                    test: /\.less$/,
+                    use: [
+                        ExtractCssChunks.loader,
+                        'css-loader',
+                        'less-loader'
+                    ]
+                }, {
+                    test: /\.css$/,
+                    use: [
+                        ExtractCssChunks.loader,
+                        'css-loader'
+                    ]
                 }
             ]
         },
@@ -57,7 +74,17 @@ export default (options) => {
             }),
             new webpack.HotModuleReplacementPlugin(),
             new ReactLoadablePlugin({
-                filename:  dirs.stats,
+                filename: dirs.stats,
+            }),
+            new ExtractCssChunks(
+                {
+                    filename: "[name].css",
+                    chunkFilename: "[id].css",
+                    hot: true 
+                }
+            ),
+            new CleanWebpackPlugin(['client'], {
+                root: dirs.deploy,
             }),
         ],
         optimization: {
@@ -65,6 +92,28 @@ export default (options) => {
             removeEmptyChunks: false,
             splitChunks: false,
         },
+        // optimization: {
+        //     runtimeChunk: 'single',
+        //     splitChunks: {
+        //         chunks: 'initial',
+        //         name: true,
+        //         cacheGroups: {
+        //             // vendors: {
+        //             //     chunks: 'all',
+        //             //     test: /[\\/]node_modules[\\/]/,
+        //             //     name: true,
+        //             // },
+        //             styles: {
+        //                 name: true,
+        //                 test: /\.css$/,
+        //                 chunks(chunk) {
+        //                     return chunk.name === 'runtime'
+        //                 },
+        //                 enforce: true
+        //             }
+        //         },
+        //     },
+        // },
         stats: {
             colors: true,
             modules: false,

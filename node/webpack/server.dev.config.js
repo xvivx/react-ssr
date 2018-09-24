@@ -41,7 +41,12 @@ export default {
                         }
                     }
                 ]
-            },
+            }, {
+                test: /\.(c|le)ss$/,
+                use: [
+                    'null-loader'
+                ]
+            }
         ]
     },
     plugins: [
@@ -49,10 +54,15 @@ export default {
             'process.env.BROWSER': false,
         }),
         new webpack.HotModuleReplacementPlugin(),
-        new CleanWebpackPlugin(['server', 'stats'], {
+        new CleanWebpackPlugin(['server'], {
             root: dirs.deploy,
-        })
+        }),
     ],
+    optimization: {
+        removeAvailableModules: false,
+        removeEmptyChunks: false,
+        splitChunks: false,
+    },
     stats: {
         colors: true,
         timings: true

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import './contact.css';
 
 export default class Home extends React.PureComponent {
     constructor(props) {
@@ -11,7 +12,7 @@ export default class Home extends React.PureComponent {
     render() {
         return (
             <div>
-                <h1>联系我们</h1>
+                <h1 className="container">联系我们</h1>
                 <div>
                     请联系我们
                 </div>

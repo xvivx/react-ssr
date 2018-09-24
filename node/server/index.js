@@ -51,6 +51,8 @@ async function ssrRender(req, res, next) {
     );
 }
 
+app.get('^/$', ssrRender);
+app.use(global.CLIENT_INS);
 app.get('/*', ssrRender);
 
 if (module.hot) {
