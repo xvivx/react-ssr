@@ -17,7 +17,6 @@ export var changeToPromise = function (compiler, config) {
             var { errors, warnings } = stats.compilation || {};
 
             if(errors.length) {
-                // reject(errors[0]);
                 console.info(errors[0]);
                 return;
             }
@@ -30,7 +29,7 @@ export var changeToPromise = function (compiler, config) {
             if(warnings.length) {
                 warnings.forEach(console.warn);
             }
-
+            print('');
             resolve(stats);
         });
     });

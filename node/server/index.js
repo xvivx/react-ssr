@@ -28,9 +28,9 @@ async function ssrRender(req, res, next) {
                     location={req.url}
                     context={context}
                 >
-                    {
-                        renderRoutes(routes)
-                    }
+                {
+                    renderRoutes(routes)
+                }
                 </StaticRouter>
             </Loadable.Capture>
         );
@@ -68,7 +68,7 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500);
 
     console.info(err.stack);
-    res.send(`${err.stack.replace(/at/g, '<br>at')}`);
+    res.send(`${err.stack.replace(/at/g, '<br />at')}`);
 });
 
 

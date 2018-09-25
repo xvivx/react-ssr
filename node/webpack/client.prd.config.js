@@ -33,15 +33,17 @@ export default (options) => {
         },
         output: {
             path: path.resolve(dirs.deploy, 'client'),
-            filename: '[name].js',
-            chunkFilename: 'chunks/[name].js',
+            filename: '[name].[chunkhash:5].js',
+            chunkFilename: 'chunks/[name].[chunkhash:5].js',
             publicPath: dirs.publicPath,
             devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
         },
-        target: 'web',
         mode: 'production',
+        target: 'web',
         devtool: 'none',
+        context: dirs.root,
         module: {
+            strictExportPresence: true,
             rules: [
                 {
                     test: /\.jsx?$/,
@@ -64,7 +66,14 @@ export default (options) => {
                     test: /\.less$/,
                     use: [
                         ExtractCssChunks.loader,
-                        'css-loader',
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                modules: true,
+                                importLoaders: 1,
+                                localIdentName: '[name]__[local]--[hash:base64:5]'
+                            }
+                        },
                         'less-loader'
                     ]
                 }, {
@@ -88,24 +97,18 @@ export default (options) => {
         },
         plugins: [
             new webpack.DefinePlugin({
-                'process.env.NODE_ENV': JSON.stringify('development'),
+                'process.env.NODE_ENV': JSON.stringify('production'),
                 'process.env.RENDER_TYPE': JSON.stringify(options.type || 'spa')
             }),
             new HtmlWebpackPlugin({
                 title: 'REACT SSR',
-                template: path.resolve(dirs.client, 'public/index.html'),
+                template: path.resolve(dirs.public, 'index.html'),
                 filename: 'index.html'
             }),
-            new webpack.HotModuleReplacementPlugin(),
-            new ReactLoadablePlugin({
-                filename: dirs.stats,
+            new ExtractCssChunks({
+                filename: 'css/[name].css',
+                chunkFilename: 'css/[name].[chunkhash:5].css',
             }),
-            new ExtractCssChunks(
-                {
-                    filename: 'css/[name].css',
-                    chunkFilename: 'css/[name].[hash:5].css',
-                }
-            ),
             new CleanWebpackPlugin(['client'], {
                 root: dirs.deploy,
             }),
@@ -119,6 +122,14 @@ export default (options) => {
                 includeSourcemap: false,
                 publicPath: dirs.publicPath
             }),
+            new webpack.HashedModuleIdsPlugin({
+                hashFunction: 'sha256',
+                hashDigest: 'hex',
+                hashDigestLength: 5
+            }),
+            ...(options.type === 'ssr' ? [new ReactLoadablePlugin({
+                filename: dirs.stats,
+            })] : []),
         ],
         optimization: {
             runtimeChunk: 'single',
@@ -128,7 +139,7 @@ export default (options) => {
                     node_modules: {
                         chunks: 'all',
                         test: /[\\/]node_modules[\\/]/,
-                        name: true,
+                        name: 'commons',
                     },
                 },
             },

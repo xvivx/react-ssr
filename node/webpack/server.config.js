@@ -2,6 +2,7 @@ import path from 'path';
 import webpack from 'webpack';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
 import nodeExternals from 'webpack-node-externals';
+import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 
 import dirs from '../config/index';
 import { env } from '../utils/env';
@@ -22,7 +23,7 @@ export default {
         publicPath: dirs.publicPath,
         devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
     },
-    context: dirs.server,
+    context: dirs.root,
     mode: 'development',
     target: 'node',
     devtool: isDev ? 'cheap-module-eval-source-map' : 'source-map',
@@ -49,9 +50,29 @@ export default {
                     }
                 ]
             }, {
-                test: /\.(c|le)ss$/,
+                test: /\.less$/,
+                exclude: /node_modules/,
                 use: [
-                    'null-loader'
+                    {
+                        loader: 'css-loader/locals',
+                        options: {
+                            modules: true,
+                            importLoaders: 1,
+                            localIdentName: '[name]__[local]--[hash:base64:5]'
+                        }
+                    },
+                    'less-loader'
+                ]
+            }, {
+                test: /\.css$/,
+                use: [
+                    {
+                        loader: 'css-loader/locals',
+                        options: {
+                            modules: true,
+                            localIdentName: '[name]__[local]--[hash:base64:5]'
+                        }
+                    }
                 ]
             }, {
                 test: /\.(jpg|png|gif|jpeg)$/,

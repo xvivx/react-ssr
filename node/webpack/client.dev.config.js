@@ -1,7 +1,6 @@
 import path from 'path';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import CleanWebpackPlugin from 'clean-webpack-plugin';
 import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 import { ReactLoadablePlugin } from 'react-loadable/webpack';
 
@@ -27,11 +26,13 @@ export default (options) => {
             publicPath: dirs.publicPath,
             devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
         },
+        context: dirs.root,
         cache: true,
         target: 'web',
         mode: 'development',
         devtool: 'cheap-module-eval-source-map',
         module: {
+            strictExportPresence: true,
             rules: [
                 {
                     test: /\.jsx?$/,
@@ -54,16 +55,30 @@ export default (options) => {
                     ]
                 }, {
                     test: /\.less$/,
+                    exclude: /node_modules/,
                     use: [
                         ExtractCssChunks.loader,
-                        'css-loader',
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                modules: true,
+                                importLoaders: 1,
+                                localIdentName: '[name]__[local]--[hash:base64:5]'
+                            }
+                        },
                         'less-loader'
                     ]
                 }, {
                     test: /\.css$/,
                     use: [
                         ExtractCssChunks.loader,
-                        'css-loader'
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                modules: true,
+                                localIdentName: '[name]__[local]--[hash:base64:5]'
+                            }
+                        },
                     ]
                 }, {
                     test: /\.(jpg|png|gif|jpeg)$/,
@@ -85,20 +100,18 @@ export default (options) => {
             }),
             new HtmlWebpackPlugin({
                 title: 'REACT SSR',
-                template: path.resolve(dirs.client, 'public/index.html'),
+                template: path.resolve(dirs.public, 'index.html'),
                 filename: 'index.html'
             }),
             new webpack.HotModuleReplacementPlugin(),
-            new ReactLoadablePlugin({
-                filename: dirs.stats,
+            new ExtractCssChunks({
+                filename: 'css/[name].css',
+                chunkFilename: 'css/[id].css',
+                hot: true 
             }),
-            new ExtractCssChunks(
-                {
-                    filename: 'css/[name].css',
-                    chunkFilename: 'css/[name].[hash:5].css',
-                    hot: true 
-                }
-            ),
+            ...(options.type === 'ssr' ? [new ReactLoadablePlugin({
+                filename: dirs.stats,
+            })] : []),
         ],
         optimization: {
             removeAvailableModules: false,
@@ -110,10 +123,11 @@ export default (options) => {
             timings: isDev,
             exclude: /node_modules/,
             builtAt: false,
-            context: dirs.server,
+            context: dirs.client,
             modules: false,
             reasons: isDev,
-            cachedAssets: isDev
+            cachedAssets: isDev,
+            children: false
         },
     }
 }

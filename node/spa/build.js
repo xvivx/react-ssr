@@ -12,18 +12,18 @@ var start = null;
 
 compiler.hooks.compile.tap('build', function () {
     start = new Date();
-    print(`[${start.toLocaleTimeString()}] 开始执行dll任务`, 'green');
+    print(`[${start.toLocaleTimeString()}] 开始执行前端生产模式打包任务`, 'green');
 });
 
 compiler.run((err, stats) => {
     if(stats.compilation.errors.length) {
-        print('dll打包失败');
+        print('spa生产模式打包失败');
         console.log(stats.compilation.errors);
     } else {
         var wait = new Date() - start;
         
         console.info(stats.toString(config.stats));
-        print(`[${new Date().toLocaleTimeString()}] dll打包完成 -${wait}ms`, 'green');
+        print(`[${new Date().toLocaleTimeString()}] 打包完成 - ${wait}ms`, 'green');
         
         var app = express();
 

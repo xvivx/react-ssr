@@ -1,0 +1,50 @@
+{
+  "name": "react-ssr",
+  "version": "1.0.0",
+  "main": "index.js",
+  "description": "react react-ssr ssr react-demo webpack webpack-demo node",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "spa:dev": "babel-node node/spa/dev",
+    "spa:build": "babel-node node/spa/build",
+    "ssr:dev": "babel-node node/ssr/start --development",
+    "ssr:client:build": "babel-node node/ssr/client.build",
+    "ssr:server:build": "babel-node node/ssr/server.build",
+    "ssr:debug": "babel-node node/ssr/dev --inspect-brk=9292",
+    "ssr:build": "babel-node node/ssr/build",
+    "dll": "babel-node node/dll/dll"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-loadable": "^5.5.0",
+    "react-router": "^4.3.1",
+    "react-router-config": "^1.0.0-beta.4",
+    "react-router-dom": "^4.3.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.0",
+    "@babel/core": "^7.1.0",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "add-asset-html-webpack-plugin": "^3.0.1",
+    "babel-loader": "^8.0.2",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "clean-webpack-plugin": "^0.1.19",
+    "css-loader": "^1.0.0",
+    "extract-css-chunks-webpack-plugin": "^3.1.1",
+    "file-loader": "^2.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "less": "^3.8.1",
+    "less-loader": "^4.1.0",
+    "null-loader": "^0.1.1",
+    "style-loader": "^0.23.0",
+    "webpack": "^4.19.1",
+    "webpack-dev-middleware": "^3.3.0",
+    "webpack-hot-middleware": "^2.24.1",
+    "webpack-node-externals": "^1.7.2"
+  }
+}

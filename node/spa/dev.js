@@ -6,16 +6,44 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 
 import defineConfig from '../webpack/client.dev.config';
 import dirs from '../config/index';
+import { print } from '../utils/log';
 
 
 var app = express();
+var startTime = null;
 var config = defineConfig({ type: 'spa' });
 var compiler = webpack(config);
-var compilerPromise = new Promise((resolve) => {
-    compiler.hooks.done.tap('client-complete', (stats) => {
-        resolve(stats);
-    });
+var compilerResolve
+var compilerPromise = new Promise(r => compilerResolve = r);
+
+
+compiler.hooks.compile.tap('dev', function () {
+    startTime = new Date();
+    print(`[${startTime.toLocaleTimeString()}] 开始执构建开发环境...`, 'yellow');
 });
+
+compiler.run((err, stats) => {
+    if(stats.compilation.errors.length) {
+        print('webpack运行失败，错误如下：');
+        console.log(stats.compilation.errors);
+    } else {
+        var wait = new Date() - startTime;
+        
+        console.info(stats.toString(config.stats));
+        print(`[${new Date().toLocaleTimeString()}] 构建成功 - ${wait}ms`, 'green');
+        compilerResolve();
+    }
+});
+
+app.use(webpackDevMiddleware(compiler, {
+    publicPath: config.output.publicPath,
+    logLevel: 'silent',
+    wacthOptions: {
+        ignored: /node_modules/,
+    }
+}));
+
+app.use(webpackHotMiddleware(compiler));
 
 
 process.on('unhandledRejection', (msg) => {
@@ -24,20 +52,10 @@ process.on('unhandledRejection', (msg) => {
 });
 
 async function start() {
-    app.use(webpackDevMiddleware(compiler, {
-        publicPath: '/',
-        logTime: true,
-        wacthOptions: {
-            ignored: /node_modules/,
-        }
-    }));
-
-    app.use(webpackHotMiddleware(compiler));
-
     // 等待编译完成
     await compilerPromise;
 
-    // 这个要放在最后面
+    // 为了兼容browserhistory
     app.get('*', (req, res, next) => {
         var filename = path.join(config.output.path, 'index.html');
 
@@ -67,6 +85,5 @@ async function start() {
         console.info(`服务器已经启动在: http://localhost:${dirs.port}`);
     });
 }
-
 
 start();
