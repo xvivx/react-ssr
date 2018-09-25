@@ -15,10 +15,10 @@ export default class Home extends React.PureComponent {
         return (
             <div className="container">
                 <h1>Home Page</h1>
-                <Time></Time>
                 <div style={{textAlign: 'center'}}>
                     <img src={bg} alt=""/>
                 </div>
+                <Time></Time>
             </div>
         );
     }

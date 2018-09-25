@@ -2,7 +2,9 @@
   "name": "react-ssr",
   "version": "1.0.0",
   "main": "index.js",
+  "description": "react react-ssr ssr react-demo webpack webpack-demo node",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "spa:dev": "babel-node node/spa/dev",
     "spa:build": "babel-node node/spa/build",

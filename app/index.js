@@ -21,7 +21,6 @@ var hotRender = () => {
     );
 };
 
-
 try {
     module.hot.accept('./routes/app.routes', () => {
         hotRender();
@@ -33,13 +32,13 @@ try {
 }
 
 
-if(process.env.RENDER_TYPE !== 'spa') {
-    window.PREALOAD_DONE = () => {
-        Loadable.preloadReady().then(() => {
-            hotRender();
-        });
-    };
-} else {
-    hotRender();
-}
-
+document.addEventListener('DOMContentLoaded', function () {
+    if(process.env.RENDER_TYPE === 'spa') {
+        hotRender();
+        return;
+    }
+    
+    Loadable.preloadReady().then(() => {
+        hotRender();
+    });
+});

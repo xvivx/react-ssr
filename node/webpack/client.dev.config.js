@@ -106,7 +106,11 @@ export default (options) => {
             new webpack.HotModuleReplacementPlugin(),
             new ExtractCssChunks({
                 filename: 'css/[name].css',
+<<<<<<< HEAD
                 chunkFilename: 'css/[id].css',
+=======
+                chunkFilename: 'css/[name].[hash:5].css',
+>>>>>>> 2a83360c966ea3c58caa5f0b2c158c9f07e6141a
                 hot: true 
             }),
             ...(options.type === 'ssr' ? [new ReactLoadablePlugin({
