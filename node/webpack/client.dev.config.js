@@ -32,6 +32,7 @@ export default (options) => {
         mode: 'development',
         devtool: 'cheap-module-eval-source-map',
         module: {
+            strictExportPresence: true,
             rules: [
                 {
                     test: /\.jsx?$/,
@@ -89,16 +90,14 @@ export default (options) => {
                 filename: 'index.html'
             }),
             new webpack.HotModuleReplacementPlugin(),
-            new ReactLoadablePlugin({
-                filename: dirs.stats,
+            new ExtractCssChunks({
+                filename: 'css/[name].css',
+                chunkFilename: 'css/[name].[hash:5].css',
+                hot: true 
             }),
-            new ExtractCssChunks(
-                {
-                    filename: 'css/[name].css',
-                    chunkFilename: 'css/[name].[hash:5].css',
-                    hot: true 
-                }
-            ),
+            ...(options.type === 'ssr' ? [new ReactLoadablePlugin({
+                filename: dirs.stats,
+            })] : []),
         ],
         optimization: {
             removeAvailableModules: false,
@@ -113,7 +112,8 @@ export default (options) => {
             context: dirs.server,
             modules: false,
             reasons: isDev,
-            cachedAssets: isDev
+            cachedAssets: isDev,
+            children: false
         },
     }
 }

@@ -25,6 +25,7 @@ export default {
         devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
     },
     mode: 'production',
+    devtool: 'none',
     module: {
         strictExportPresence: true,
         rules: [
