@@ -1,7 +1,7 @@
 import React from 'react';
 import Loadable from 'react-loadable';
 import dynamic from '../utils/dynamic';
-import App from './App';
+import Root from '../components/root/index';
 
 var Loading = (props) => <div>Loading...</div>;
 
@@ -28,7 +28,7 @@ var NotFound = Loadable({
 
 
 export default [{
-    component: App,
+    component: Root,
     routes: [
         {
             path: '/',

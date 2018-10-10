@@ -48,6 +48,7 @@ async function ssrRender(req, res, next) {
             replace('<div id="root"></div>', `<div id="root">${ssrHtml}</div>`).
             replace('</body>', `${scripts}</body>`)
         );
+        return;
     } catch (err) {
         next(err);
     }
@@ -58,20 +59,21 @@ async function start() {
         console.log(req.method, '-->', req.path);
         next();
     });
-    app.get('^/$', ssrRender);
-    app.use(express.static(dirs.deploy + '/client'));
+    app.use(dirs.publicPath, express.static(dirs.deploy + '/client'));
     app.get('/*', ssrRender);
 
     app.use((req, res, next) => {
         res.status(404);
-        res.render('404');
+        res.send('404');
+        return;
     });
     
     app.use((err, req, res, next) => {
-        res.status(err.status || 500);
-    
         console.info(err.stack);
+        
+        res.status(err.status || 500);
         res.send(`服务端错误，请联系开发报告一个bug`);
+        return;
     });
 
     await Loadable.preloadAll();
@@ -84,4 +86,3 @@ async function start() {
 start();
 
 export default app;
-

@@ -7,13 +7,7 @@ module.exports = {
                     node: 'current'
                 }
             }
-        ], [
-            '@babel/preset-react', {}
         ]
-    ],
-    plugins: [  
-        'syntax-dynamic-import',
-        'react-loadable/babel'
     ],
     ignore: ['node_modules', 'deploy'],
 };

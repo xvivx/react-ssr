@@ -12,12 +12,15 @@ export var changeToPromise = function (compiler, config) {
             print(`[${timeStart.toLocaleTimeString()}]: 开始编译 '${config.name}'...`, color);
         });
 
+
         compiler.hooks.done.tap(config.name, (stats) => {
             var endTime = new Date();
             var { errors, warnings } = stats.compilation || {};
-
+            
             if(errors.length) {
-                console.info(errors[0]);
+                print(`[${endTime.toLocaleTimeString()}]: ${config.name}编译失败`, 'red');
+                print(errors[0].message, 'red');
+                reject(new Error(config.name + ' 编译失败'));
                 return;
             }
 
@@ -29,8 +32,11 @@ export var changeToPromise = function (compiler, config) {
             if(warnings.length) {
                 warnings.forEach(console.warn);
             }
+
             print('');
             resolve(stats);
         });
     });
 };
+
+

@@ -2,7 +2,6 @@ import path from 'path';
 import webpack from 'webpack';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
 import nodeExternals from 'webpack-node-externals';
-import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 
 import dirs from '../config/index';
 import { env } from '../utils/env';
@@ -15,6 +14,7 @@ export default {
         server: [path.resolve(dirs.server, isDev ? 'index.js' : 'index.prd.js')],
     },
     cache: isDev,
+    bail: !isDev,
     output: {
         path: path.resolve(dirs.deploy, 'server'),
         filename: '[name].js',
@@ -43,7 +43,12 @@ export default {
                                 '@babel/preset-react'
                             ],
                             plugins: [
-                                'syntax-dynamic-import',
+                                '@babel/plugin-syntax-dynamic-import',
+                                [
+                                    'transform-class-properties', { 
+                                        spec: true 
+                                    }
+                                ],
                                 'react-loadable/babel'
                             ]
                         }
@@ -93,6 +98,11 @@ export default {
         }),
         new CleanWebpackPlugin(['server'], {
             root: dirs.deploy,
+        }),
+        new webpack.BannerPlugin({
+            banner: 'require("source-map-support").install();',
+            raw: true,
+            entryOnly: false,
         }),
         ...(isDev ? [new webpack.HotModuleReplacementPlugin()] : [])
     ],

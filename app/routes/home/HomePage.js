@@ -18,7 +18,6 @@ export default class Home extends React.PureComponent {
                 <div style={{textAlign: 'center'}}>
                     <img src={bg} alt=""/>
                 </div>
-                <Time></Time>
             </div>
         );
     }

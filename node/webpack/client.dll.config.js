@@ -16,6 +16,8 @@ export default {
             'react-dom',
             'react-router',
             'react-router-dom',
+            'react-loadable',
+            'react-router-config'
         ]
     },
     output: {

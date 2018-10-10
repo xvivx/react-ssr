@@ -9,7 +9,7 @@ var defaultConfig = {
     deploy: path.resolve(root, 'deploy'),
     stats: path.resolve(root, 'deploy/stats/react-loadable.json'),
     public: path.resolve(root, 'node/public'),
-    publicPath: '/',
+    publicPath: '/test/',
     port: 3000,
 };
 

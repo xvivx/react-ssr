@@ -13,7 +13,17 @@ import dirs from '../config/index';
 
 var app = express();
 
+app.use(function (req, res, next) {
+    console.log(req.method, '-->', req.path);
+    next();
+});
+
 async function ssrRender(req, res, next) {
+    if(/\./.test(req.path)) {
+        next();
+        return;
+    }
+
     try {
         var modules = [];
         var str = fs.readFileSync(dirs.stats).toString();
@@ -46,29 +56,31 @@ async function ssrRender(req, res, next) {
 
         res.send(
             global.INDEX_HTML.
-                replace('</head>', `${styles}</head>`).
-                replace('<div id="root"></div>', `<div id="root">${ssr}</div>`).
-                replace('</body>', `${scripts}</body>`)
+            replace('</head>', `${styles}</head>`).
+            replace('<div id="root"></div>', `<div id="root">${ssr}</div>`).
+            replace('</body>', `${scripts}</body>`)
         );
+        return;
     } catch (err) {
         next(err);
+        return;
     }
 }
 
-app.get('^/$', ssrRender);
-app.use(global.CLIENT_INS);
 app.get('/*', ssrRender);
-
+app.use(express.static(dirs.deploy + '/client'));
 app.use((req, res, next) => {
-    res.status(404);
-    res.render('404');
+    res.status(404).send('404');
+    return;
 });
 
 app.use((err, req, res, next) => {
-    res.status(err.status || 500);
-
     console.info(err.stack);
-    res.send(`${err.stack.replace(/at/g, '<br />at')}`);
+
+    res.
+    status(err.stack || 500).
+    send(`${err.stack.replace(/at/g, '<br />at')}`);
+    return;
 });
 
 
@@ -78,5 +90,11 @@ if (module.hot) {
 }
 
 
-export default app;
+process.on('unhandledRejection', (err) => {
+    console.log('程序发生错误');
+    console.error(err);
+    process.exit(1);
+});
 
+
+export default app;

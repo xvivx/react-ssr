@@ -15,6 +15,10 @@ serverConfig.output.hotUpdateMainFilename = 'updates/[hash].hot-update.json';
 serverConfig.output.hotUpdateChunkFilename = 'updates/[id].[hash].hot-update.js';
 
 var server = express();
+var app;
+var appPromise;
+var appPromiseResolve;
+var appPromiseIsResolved = true;
 var clientConfig = defineClientConfig({ type: 'ssr' });
 var multiCompiler = webpack([clientConfig, serverConfig]);
 var [clientCompiler, serverCompiler] = multiCompiler.compilers;
@@ -22,7 +26,7 @@ var clientPromise = changeToPromise(clientCompiler, clientConfig);
 var serverPromise = changeToPromise(serverCompiler, serverConfig);
 
 
-global.CLIENT_INS = (webpackDevMiddleware(clientCompiler, {
+server.use(webpackDevMiddleware(clientCompiler, {
     publicPath: dirs.publicPath,
     logLevel: 'silent',
 }));
@@ -30,14 +34,19 @@ global.CLIENT_INS = (webpackDevMiddleware(clientCompiler, {
 server.use(webpackHotMiddleware(clientCompiler, { log: false }));
 
 
-let appPromise;
-let appPromiseResolve;
-let appPromiseIsResolved = true;
+clientCompiler.hooks.compilation.tap('html', (compilation) => {
+    compilation.hooks.
+    htmlWebpackPluginAfterHtmlProcessing.
+    tapAsync('html', (data, cb) => {
+        global.INDEX_HTML = data.html;
+        cb(null, data);
+    });
+});
 
 
 serverCompiler.hooks.compile.tap(serverConfig.name, () => {
     if (!appPromiseIsResolved) return;
-    
+
     appPromiseIsResolved = false;
     appPromise = new Promise(resolve => (appPromiseResolve = resolve));
 });
@@ -53,85 +62,83 @@ serverCompiler.watch({ ignored: /node_modules/ }, (error, stats) => {
 });
 
 
-let app;
 
 server.use((req, res) => {
     appPromise.
     then(() => app.handle(req, res)).
     catch(error => console.error(error));
+    return;
 });
 
 
 
 async function start() {
-    await clientPromise;
-    await serverPromise;
+    try {
+        await Promise.all([clientPromise, serverPromise]);
 
-    app = require('../../deploy/server/server').default;
+        app = require('../../deploy/server/server').default;
 
-    appPromiseIsResolved = true;
-    appPromiseResolve();
+        appPromiseIsResolved = true;
+        appPromiseResolve();
 
-    var filename = path.resolve(clientConfig.output.path, 'index.html');
+        var filename = path.resolve(clientConfig.output.path, 'index.html');
 
-    global.INDEX_HTML = clientCompiler.outputFileSystem.readFileSync(filename).toString();
+        global.INDEX_HTML = clientCompiler.outputFileSystem.readFileSync(filename).toString();
 
-    server.listen(dirs.port, () => {
-        print(`服务已经启动在: http://localhost:${dirs.port}`);
-    });
+        server.listen(dirs.port, () => {
+            print(`服务已经启动在: http://localhost:${dirs.port}`);
+        });
+    } catch (err) {
+        console.error(err.stack);
+        process.exit(1);
+    }
 
     return server;
 }
 
-process.on('unhandledRejection', (err) => {
-    // 发现这种错误及时退出程序，不退出也不能继续运行
-    console.log('程序发生错误');
-    console.error(err);
-    process.exit(1);
-});
-
 
 function checkForUpdate(fromUpdate) {
-    const hmrPrefix = '[\x1b[35mHMR\x1b[0m] ';
+    var hmrPrefix = '[\x1b[35mHMR\x1b[0m] ';
+
     if (!app.hot) {
-        throw new Error(`${hmrPrefix}Hot Module Replacement 已被禁用.`);
+        throw new Error(`${hmrPrefix}热更新已被禁用，请在开发模式下开启热更新，了解更多请前去webpack官方文档查看`);
     }
+
     if (app.hot.status() !== 'idle') {
         return Promise.resolve();
     }
+
     return (
-        app.hot
-        .check(true)
-        .then(updatedModules => {
+        app.
+        hot.
+        check(true).
+        then(updatedModules => {
             if (!updatedModules) {
                 if (fromUpdate) {
-                    console.info(`${hmrPrefix}Update applied.`);
+                    console.warn(`${hmrPrefix}已经更新服务端代码`);
                 }
                 return;
             }
             if (updatedModules.length === 0) {
-                console.info(`${hmrPrefix}Nothing hot updated.`);
+                console.warn(`${hmrPrefix}没有需要更新的内容`);
             } else {
-                console.info(`${hmrPrefix}Updated modules:`);
+                console.warn(`${hmrPrefix}发生更新的模块:`);
                 updatedModules.forEach(moduleId =>
-                    console.info(`${hmrPrefix} - ${moduleId}`),
+                    console.warn(`${hmrPrefix} - ${moduleId}`),
                 );
                 checkForUpdate(true);
             }
-        })
-        .catch(error => {
+        }).
+        catch(error => {
+            // 其实这里是出现了错误，现在了解到的是webpack编译出错会进这里
             if (['abort', 'fail'].includes(app.hot.status())) {
-                console.warn(`${hmrPrefix}无法应用热更新，原因如下.`);
-                console.info(error);
-
+                console.warn(`${hmrPrefix}无法应用热更新`);
                 // 删除缓存，重新拉取app
                 delete require.cache[require.resolve('../../deploy/server/server.js')];
                 app = require('../../deploy/server/server.js').default;
-                console.warn(`${hmrPrefix}App 重新加载.`);
+                console.warn(`${hmrPrefix}服务端代码重新加载.`);
             } else {
-                console.warn(
-                    `${hmrPrefix}本次更新: ${error.stack || error.message}`,
-                );
+                console.warn(`${hmrPrefix}本次更新: ${error.stack || error.message}`);
             }
         })
     );

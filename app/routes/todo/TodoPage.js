@@ -16,7 +16,7 @@ export default class Todo extends React.PureComponent {
     }
 
     handleClick() {
-        console.log('-------');
+        console.log('---点击事件---');
     }
 
     render() {

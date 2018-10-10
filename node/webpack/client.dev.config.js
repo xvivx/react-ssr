@@ -26,8 +26,12 @@ export default (options) => {
             publicPath: dirs.publicPath,
             devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
         },
+        resolve: {
+            modules: ['node_modules'],
+        },
         context: dirs.root,
-        cache: true,
+        cache: isDev,
+        bail: !isDev,
         target: 'web',
         mode: 'development',
         devtool: 'cheap-module-eval-source-map',
@@ -42,13 +46,18 @@ export default (options) => {
                             loader: 'babel-loader',
                             options: {
                                 babelrc: false,
-                                cacheDirectory: true,
+                                cacheDirectory: isDev,
                                 presets: [
                                     '@babel/preset-react'
                                 ],
                                 plugins: [
-                                    'syntax-dynamic-import',
-                                    'react-loadable/babel'
+                                    '@babel/plugin-syntax-dynamic-import',
+                                    [
+                                        'transform-class-properties', { 
+                                            spec: true 
+                                        }
+                                    ],
+                                    'react-loadable/babel',
                                 ]
                             }
                         }
@@ -96,7 +105,8 @@ export default (options) => {
         plugins: [
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify('development'),
-                'process.env.RENDER_TYPE': JSON.stringify(options.type || 'spa')
+                'process.env.RENDER_TYPE': JSON.stringify(options.type || 'spa'),
+                'process.env.BROWSER': true
             }),
             new HtmlWebpackPlugin({
                 title: 'REACT SSR',

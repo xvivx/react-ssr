@@ -28,6 +28,7 @@ export default (options) => {
         name: 'client',
         entry: {
             client: [
+                '@babel/polyfill',
                 path.resolve(dirs.client, 'index.js')
             ]
         },
@@ -47,6 +48,7 @@ export default (options) => {
             rules: [
                 {
                     test: /\.jsx?$/,
+                    sideEffects: false,
                     use: [
                         {
                             loader: 'babel-loader',
@@ -57,7 +59,13 @@ export default (options) => {
                                     ['@babel/preset-react']
                                 ],
                                 plugins: [
-                                    ['syntax-dynamic-import'],
+                                    '@babel/plugin-syntax-dynamic-import',
+                                    'react-loadable/babel',
+                                    [
+                                        'transform-class-properties', { 
+                                            spec: true 
+                                        }
+                                    ]
                                 ]
                             }
                         }
@@ -98,7 +106,8 @@ export default (options) => {
         plugins: [
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify('production'),
-                'process.env.RENDER_TYPE': JSON.stringify(options.type || 'spa')
+                'process.env.RENDER_TYPE': JSON.stringify(options.type || 'spa'),
+                'process.env.BROWSER': true
             }),
             new HtmlWebpackPlugin({
                 title: 'REACT SSR',
@@ -139,7 +148,7 @@ export default (options) => {
                     node_modules: {
                         chunks: 'all',
                         test: /[\\/]node_modules[\\/]/,
-                        name: 'commons',
+                        name: 'others',
                     },
                 },
             },

@@ -28,7 +28,7 @@ compiler.run((err, stats) => {
         var app = express();
 
         print('启动临时服务器检查项目。。。。');
-        app.use(express.static(dirs.deploy + '/client'));
+        app.use(dirs.publicPath, express.static(dirs.deploy + '/client'));
 
         app.get('*', (req, res, next) => {
             res.sendFile(dirs.deploy + '/client/index.html');
