@@ -64,7 +64,7 @@ export default (options) => {
                     ]
                 }, {
                     test: /\.less$/,
-                    exclude: /node_modules/,
+                    exclude: /(node_modules)/,
                     use: [
                         ExtractCssChunks.loader,
                         {
@@ -79,6 +79,7 @@ export default (options) => {
                     ]
                 }, {
                     test: /\.css$/,
+                    exclude: /(node_modules)/,
                     use: [
                         ExtractCssChunks.loader,
                         {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderRoutes } from 'react-router-config';
 
-import NavBar from '../NavBar';
+import NavBar from '../nav-bar/NavBar';
 import navs from '../../consts/nav';
 import styles from './root.less';
 
@@ -11,9 +11,7 @@ export default (props) => {
     return (
         <div className={styles.container}>
             <div className={styles.content}>
-                <div className={styles.nav}>
-                    <NavBar data={navs}></NavBar>
-                </div>
+                <NavBar data={navs}></NavBar>
             {
 				renderRoutes(route.routes)
 			}
